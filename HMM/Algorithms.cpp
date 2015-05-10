@@ -5,6 +5,8 @@
 
 Algorithms::Algorithms(void)
 {
+	vectorUtilityHandle = new VectorAndMapUtility();
+
 	//hard-coding PI
 	PI.push_back(0.5);
 	PI.push_back(0.5);
@@ -124,12 +126,14 @@ float Algorithms::getProbabilityOfObservation(std::vector<float> observations)
 	return prob;
 }
 
-void Algorithms::viterbi(std::vector<float> observations)
+std::vector< std::vector<float> >  Algorithms::viterbi(std::vector<float> observations)
 {
 	std::cout << "started viterbi\n";
 
 	//creating rewards and sizing it
 	std::vector< std::vector<float> > rewards;
+	std::vector<float> currentRewards;
+	float currentObservation;
 
 	rewards.resize(numberOfStates);
 	for (int i = 0 ; i < numberOfStates ; ++i)
@@ -141,16 +145,21 @@ void Algorithms::viterbi(std::vector<float> observations)
 		for (int i = 0 ; i < numberOfStates ; ++i)
 		{
 			if (t == 0)
-				rewards[i][t] = log(PI[i]) +  log(b(observations[t], i));
+				rewards[i][t] = log2(PI[i]) +  log2(b(observations[t], i));
 			else
 			{
-				
+				currentObservation = log2(b(observations[t], i));
+
+				for (int j = 0 ; j < numberOfStates ; ++j)
+					currentRewards.push_back(currentObservation + log2(A[j][i]) + rewards[j][t-1]);
+
+				rewards[i][t] = vectorUtilityHandle->getMaxElement(currentRewards);
 			}
 		}
 	}
 
 	std::cout << "done viterbi\n";
-
+	return rewards;
 }
 
 //state 0 is A
@@ -163,6 +172,11 @@ float Algorithms::b(float x, int state)
 		return 1 - x/2.0f;
 	else
 		std::cerr << "wrong choice of state";
+}
+
+float Algorithms::log2(float number)
+{
+	return log(number) / log(2.0f);
 }
 
 

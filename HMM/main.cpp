@@ -24,6 +24,8 @@ int main()
 	std::cout << "\nGamma:\n";
 	ioHandle->print2DArray(algo->getGamma());
 	
+	std::cout << "\nRewards:\n";
+	ioHandle->print2DArray(algo->viterbi(observations));
 
 	_getch();
 	return 0;
