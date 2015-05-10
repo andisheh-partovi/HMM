@@ -4,22 +4,19 @@
 #include <iostream>
 
 #include "VectorAndMapUtility.h"
+#include "Model.h"
 
 class Algorithms
 {
 private:
 
+	int totalTime;
+
 	std::vector< std::vector<float> > alpha; //forward alpha table
 	std::vector< std::vector<float> > beta; //backward beta table
 	std::vector< std::vector<float> > gamma; //forward-backward gamma table
 
-	//model
-	std::vector< std::vector<float> > A; //transition probabilities
-	std::vector<float> PI; //prior probabilities
-	float b(float x, int state); //Emittion Probabilities
-
-	int numberOfStates;
-	int totalTime;
+	Model* model;
 
 	//utility handles
 	VectorAndMapUtility* vectorUtilityHandle;
@@ -28,7 +25,7 @@ private:
 	float log2(float number);
 
 public:
-	Algorithms(void);
+	Algorithms(Model* model, int totalTime);
 	~Algorithms(void);
 
 	//Algorithms for HMM
@@ -39,7 +36,7 @@ public:
 
 	//interfaces:
 	float getProbabilityOfObservation(std::vector<float> observations);
-	//getMostLikelySequence(std::vector<float> observations);
+	std::vector<int> getMostLikelySequence(std::vector<float> observations);
 
 	std::vector< std::vector<float> > getAlpha() { return alpha; }
 	std::vector< std::vector<float> > getBeta() { return beta; }

@@ -1,31 +1,12 @@
 #include <conio.h>
 
-#include "IOHandler.h"
-#include "Algorithms.h"
+#include "Run.h"
 
 int main()
 {
-	Algorithms* algo = new Algorithms();
-	IOHandler* ioHandle = new IOHandler();
+	Run* app = new Run();
 
-	std::vector<float> observations;
-	observations.push_back(0.5);
-	observations.push_back(0.9);
-	observations.push_back(0.1);
-
-	algo->forwardBackward(observations);
-
-	std::cout << "\nAlpha:\n";
-	ioHandle->print2DArray(algo->getAlpha());
-
-	std::cout << "\nBeta:\n";
-	ioHandle->print2DArray(algo->getBeta());
-
-	std::cout << "\nGamma:\n";
-	ioHandle->print2DArray(algo->getGamma());
-	
-	std::cout << "\nRewards:\n";
-	ioHandle->print2DArray(algo->viterbi(observations));
+	app->run("data");
 
 	_getch();
 	return 0;

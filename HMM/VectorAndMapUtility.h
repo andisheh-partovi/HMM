@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Definitions.h"
+#include <unordered_map>
+#include <vector>
+#include <set>
 
 class VectorAndMapUtility
 {
@@ -111,6 +113,21 @@ public:
 				max = inputVector[i];
 
 		return max;
+	}
+
+	template<typename T> int getMaxIndex(std::vector <T> inputVector)
+	{
+		T max = inputVector.at(0);
+		int maxIndex = 0;
+
+		for (unsigned int i = 1 ; i < inputVector.size() ; ++i)
+			if (inputVector[i] > max)
+			{
+				max = inputVector[i];
+				maxIndex = i;
+			}
+
+		return maxIndex;
 	}
 
 	template<typename K, typename V> std::unordered_map<K, V> normalise(std::unordered_map<K, V> inputMap)

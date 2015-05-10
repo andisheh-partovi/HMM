@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Definitions.h"
-
 #include <dirent.h>
 #include <fstream>
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+#include <string>
 
 class IOHandler
 {
@@ -14,11 +16,7 @@ public:
 	//generic
 	std::string readFile(std::string filePath);
 	void write2File(std::string text, std::string filePath);
-	StringList getAllFilesIndirectory(std::string directoryPath);
-	
-	//project specific
-	std::string fileNUmber2FilePath (int fileNumber);
-	std::string getPOSTags(int fileNumber);
+
 
 	//screen output:
 	template<typename T> void print1DArray(std::vector <T> inputData)
