@@ -63,6 +63,8 @@
     <ClInclude Include="Algorithms.h" />
     <ClInclude Include="IOHandler.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="MyStringUtility.h" />
+    <ClInclude Include="Reward.h" />
     <ClInclude Include="Run.h" />
     <ClInclude Include="VectorAndMapUtility.h" />
   </ItemGroup>

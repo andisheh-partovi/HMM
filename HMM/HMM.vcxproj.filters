@@ -30,6 +30,12 @@
     <ClInclude Include="Run.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Reward.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyStringUtility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Algorithms.cpp">

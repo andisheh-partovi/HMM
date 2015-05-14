@@ -5,6 +5,7 @@
 
 #include "VectorAndMapUtility.h"
 #include "Model.h"
+#include "Reward.h"
 
 class Algorithms
 {
@@ -32,7 +33,7 @@ public:
 	void forward(std::vector<float> observations);
 	void backward(std::vector<float> observations);
 	void forwardBackward(std::vector<float> observations);
-	std::vector< std::vector<float> >  viterbi(std::vector<float> observations);
+	std::vector< std::vector<Reward*> >  viterbi(std::vector<float> observations);
 
 	//interfaces:
 	float getProbabilityOfObservation(std::vector<float> observations);

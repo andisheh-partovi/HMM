@@ -1,6 +1,7 @@
 #include "Algorithms.h"
 
-#include <math.h>
+#include <math.h>	//log
+#include <algorithm>    // std::reverse
 
 Algorithms::Algorithms(Model* model, int totalTime)
 {
@@ -108,18 +109,18 @@ float Algorithms::getProbabilityOfObservation(std::vector<float> observations)
 	return prob;
 }
 
-std::vector< std::vector<float> >  Algorithms::viterbi(std::vector<float> observations)
+std::vector< std::vector<Reward*> >  Algorithms::viterbi(std::vector<float> observations)
 {
 	std::cout << "started viterbi\n";
 
 	//creating rewards and sizing it
-	std::vector< std::vector<float> > rewards;
+	std::vector< std::vector<Reward*> > rewards;
 	std::vector<float> currentRewards;
 	float currentObservation;
 
-	rewards.resize(model->numberOfStates);
-	for (int i = 0 ; i < model->numberOfStates ; ++i)
-		rewards[i].resize(totalTime);
+	rewards.resize(totalTime);
+	for (int i = 0 ; i < totalTime ; ++i)
+		rewards[i].resize(model->numberOfStates);
 
 
 	for (int t = 0 ; t < totalTime ; ++t)
@@ -127,15 +128,17 @@ std::vector< std::vector<float> >  Algorithms::viterbi(std::vector<float> observ
 		for (int i = 0 ; i < model->numberOfStates ; ++i)
 		{
 			if (t == 0)
-				rewards[i][t] = log2(model->PI[i]) +  log2(model->b(observations[t], i));
+				rewards[t][i] = new Reward (log2(model->PI[i]) +  log2(model->b(observations[t], i)) , i);
 			else
 			{
 				currentObservation = log2(model->b(observations[t], i));
 
 				for (int j = 0 ; j < model->numberOfStates ; ++j)
-					currentRewards.push_back(currentObservation + log2(model->TransitionalProbabilities[j][i]) + rewards[j][t-1]);
+					currentRewards.push_back(currentObservation + log2(model->TransitionalProbabilities[j][i]) + rewards[t-1][j]->reward);
 
-				rewards[i][t] = vectorUtilityHandle->getMaxElement(currentRewards);
+				rewards[t][i] = new Reward (vectorUtilityHandle->getMaxElement(currentRewards), 
+											vectorUtilityHandle->getMaxIndex(currentRewards));
+				currentRewards.clear();
 			}
 		}
 	}
@@ -146,12 +149,51 @@ std::vector< std::vector<float> >  Algorithms::viterbi(std::vector<float> observ
 
 std::vector<int> Algorithms::getMostLikelySequence(std::vector<float> observations)
 {
-	std::vector< std::vector<float> > rewards = viterbi(observations);
+	std::vector< std::vector<Reward*> > rewards = viterbi(observations);
 	std::vector<int> optimalSequence;
 
-	for (int t = 0 ; t < rewards.size() ; ++t)
-		optimalSequence.push_back(vectorUtilityHandle->getMaxIndex(rewards[t]));
+	//printing the reward:
+	//for (int t = 0 ; t < rewards.size() ; ++t)
+	//{
+	//	std::cout << "time:" << t << ":\n";
 
+	//	for (int i = 0 ; i < rewards[t].size() ; ++i)
+	//		std::cout << rewards[t][i]->toString();
+
+	//	std::cout << "\n";
+	//}
+
+	float maximum;
+	int maxIndex;
+	int previousState;
+
+	for (int t = rewards.size() - 1 ; t >= 0 ; --t)
+	{
+		if (t == rewards.size() - 1)
+		{
+			maxIndex = 0;
+			maximum = rewards[t][0]->reward;
+
+			for (int j = 1 ; j < rewards[t].size() ; ++j)
+			{
+				if (rewards[t][j]->reward > maximum)
+				{
+					maximum = rewards[t][j]->reward;
+					maxIndex = j;
+				}
+			}
+
+			previousState = rewards[t][maxIndex]->state;
+			optimalSequence.push_back(maxIndex);
+		}
+		else
+		{
+			optimalSequence.push_back(previousState);
+			previousState = rewards[t][previousState]->state;
+		}	
+	}
+
+	std::reverse(optimalSequence.begin(),optimalSequence.end());
 	return optimalSequence;
 }
 

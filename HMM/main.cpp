@@ -6,7 +6,7 @@ int main()
 {
 	Run* app = new Run();
 
-	app->run("data");
+	app->run("HMMassignment\\house1.txt");
 
 	_getch();
 	return 0;
