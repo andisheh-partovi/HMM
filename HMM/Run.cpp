@@ -17,22 +17,47 @@ Model* Run::createModel()
 	PI.push_back(0.5);
 	PI.push_back(0.5);
 
-	//hard-coding A
+	// Transitional Probs Model 1
+	// A
 	std::vector<float> tempRow;
-	tempRow.push_back(0.3f);
-	tempRow.push_back(0.7f);
+	tempRow.push_back(0.867f);
+	tempRow.push_back(0.133f);
 	TransitionalProbabilities.push_back(tempRow);
-
+	// H
 	std::vector<float> tempRow2;
-	tempRow2.push_back(0.5f);
-	tempRow2.push_back(0.5f);
+	tempRow2.push_back(0.006f);
+	tempRow2.push_back(0.994f);
 	TransitionalProbabilities.push_back(tempRow2);
 
-	meanPerState.push_back(100);
-	meanPerState.push_back(100);
+	//// Transitional Probs Model 2
+	//// A
+	//std::vector<float> tempRow;
+	//tempRow.push_back(0.550f);
+	//tempRow.push_back(0.450f);
+	//TransitionalProbabilities.push_back(tempRow);
+	//// H
+	//std::vector<float> tempRow2;
+	//tempRow2.push_back(0.192f);
+	//tempRow2.push_back(0.808f);
+	//TransitionalProbabilities.push_back(tempRow2);
 
-	SDPerState.push_back(50);
-	SDPerState.push_back(50);
+	////house 1
+	//meanPerState.push_back(103.066f); //for "Away" state
+	//meanPerState.push_back(621.303f); //for "Home" state
+	//SDPerState.push_back(46.729f); //for "Away" state
+	//SDPerState.push_back(657.912f); //for "Home" state
+
+	////house 2
+	//meanPerState.push_back(55.523f); //for "Away" state
+	//meanPerState.push_back(1411.336f); //for "Home" state
+	//SDPerState.push_back(143.540f); //for "Away" state
+	//SDPerState.push_back(1463.731f); //for "Home" state
+
+	//house 4
+	meanPerState.push_back(201.625f); //for "Away" state
+	meanPerState.push_back(739.588f); //for "Home" state
+	SDPerState.push_back(37.511f); //for "Away" state
+	SDPerState.push_back(758.378f); //for "Home" state
 
 	return new Model(TransitionalProbabilities, PI, meanPerState, SDPerState);
 }
@@ -40,11 +65,28 @@ Model* Run::createModel()
 std::vector<float> Run::getObservations(std::string fileContent)
 {
 	std::vector<float> observations;
+	std::vector<std::string> eachNumber;
+	float sum = 0;
+	int time;
 
 	std::vector<std::string> allLines = stringUtilityHandle->split(fileContent, '\n' );
 	
 	for (unsigned int i = 0 ; i < allLines.size() ; ++i)
-		observations.push_back(stringUtilityHandle->string2Int(allLines[i]));
+	{
+		eachNumber = stringUtilityHandle->split(allLines[i], '\t' );
+		time = stringUtilityHandle->string2Int(eachNumber[1]);
+
+		if (time > 33 && time <45) //if it is dinner time, i.e. between [34,44]
+		{
+			//std::cout << eachNumber[0];
+			sum += stringUtilityHandle->string2Int(eachNumber[0]);
+		}
+		else if (time == 45)
+		{
+			observations.push_back(sum / 11);
+			sum = 0;
+		}
+	}	
 
 	return observations;
 }
@@ -73,8 +115,24 @@ void Run::run(std::string dataFilePath)
 	//std::cout << "\nGamma:\n";
 	//ioHandle->print2DArray(algoHandle->getGamma());
 
-	std::cout << "\nOptimal Sequence:\n";
-	ioHandle->print1DArray(algoHandle->getMostLikelySequence(observations));
+	
+	std::vector<int> sequence = algoHandle->getMostLikelySequence(observations);
+	std::string sequenceText;
+
+	//std::cout << "\nOptimal Sequence:\n";
+	//ioHandle->print1DArray(sequence);
+
+	for (int i = 0 ; i < sequence.size() ; ++i)
+	{
+		if (sequence[i] == 0)
+			sequenceText += "A";
+		else if (sequence[i] == 1)
+			sequenceText += "H";
+
+		sequenceText += "\n";
+	}
+
+	ioHandle->write2File(sequenceText, "mostLikelyObservation4.txt");
 }
 
 

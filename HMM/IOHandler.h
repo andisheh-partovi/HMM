@@ -10,14 +10,51 @@
 class IOHandler
 {
 public:
-	IOHandler(void);
-	~IOHandler(void);
 
 	//generic
-	std::string readFile(std::string filePath);
-	void write2File(std::string text, std::string filePath);
+	std::string readFile(std::string filePath)
+	{
+		std::string fileContent;
+		std::string eachLine;
+		std::ifstream file;
 
+		file.open (filePath);
 
+		if (file.is_open())
+		{
+			while(!file.eof()) // To get you all the lines.
+			{
+				std::getline(file,eachLine); // Saves the line in STRING.
+				fileContent += eachLine + "\n";
+			}
+
+			file.close();
+
+			return fileContent;
+		}
+		else
+		{
+			std::cerr << "unable to open file for reading:" << filePath;
+			return NULL;
+		}
+	}
+
+	void write2File(std::string text, std::string filePath)
+	{
+		std::ofstream file;
+		file.open (filePath);
+
+		if (file.is_open())
+		{
+			file << text;
+
+			file.close();
+
+		}
+		else
+			std::cerr << "unable to open file for writing:" << filePath;
+	}
+	
 	//screen output:
 	template<typename T> void print1DArray(std::vector <T> inputData)
 	{
